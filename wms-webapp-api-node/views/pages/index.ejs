@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header>
+  <%- include('../partials/header'); %>
+</header>
+
+<main>
+  <div margin-left: auto; margin-right: 0;> <p> Latest Device Status : &nbsp;&nbsp;
+    <% if( LatestDeviceStatus == 0) {%>
+      <img src="reddot.png" width="20px" height="20px" alt="False" style="margin-left: auto; margin-right: 0;" /> 
+      <%
+  }
+    else{%>
+      <img src="green-dot-small.svg.hi.png" alt="true" width="20px" height="20px" style="margin-left: auto; margin-right: 0;" /> 
+    <%} %>
+    </p></div>
+  <div class="jumbotron">
+    
+    <table id="myTable" class="display">
+      <thead>
+          <tr>
+            <th>device Id </th>
+              <th>Device Status </th>
+              <th>Sreation Date</th>
+              <th>Device Starttime</th>
+          </tr>
+      </thead>
+      <tbody>
+        <% data.forEach(function(data) { %>
+          <tr>
+              <td><%= data.device_id %></td>
+              <td><% if( data.device_status ==0) {%>
+                <img src="reddot.png" width="20px" height="20px" alt="False" /> 
+                
+              <%
+            }
+              else{%>
+                <img src="green-dot-small.svg.hi.png" alt="true" width="20px" height="20px" /> 
+                
+
+              <%} %>
+              </td>
+              <td><%= data.creation_date %></td>
+              <td><%= data.device_starttime %></td>
+          </tr>
+          <% }); %>
+      </tbody>
+  </table>
+  </div>
+</main>
+<footer>
+  <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>
