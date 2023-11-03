@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"node index.js"
+    "start": "node index.js"
   },
   "author": "Avinash Joshi",
   "license": "ISC",
@@ -14,9 +14,7 @@
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
-    "mysql2": "^3.6.1",
-    "mysql2-promise": "^0.1.4",
-    "nodemon": "^3.0.1",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "stepper.js": "^1.0.4"
   }
 }

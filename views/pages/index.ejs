@@ -8,32 +8,69 @@
 <header>
   <%- include('../partials/header'); %>
 </header>
+<div margin-left: auto; margin-right: 0;> <p> Latest Device Status : &nbsp;&nbsp;
+  <% if( LatestDeviceStatus == 0) {%>
+    <img src="reddot.png" width="20px" height="20px" alt="False" style="margin-left: auto; margin-right: 0;" /> 
+    <%
+}
+  else{%>
+    <img src="green-dot-small.svg.hi.png" alt="true" width="20px" height="20px" style="margin-left: auto; margin-right: 0;" /> 
+  <%} %>
+  </p></div>
+<form id="myForm" action="/updatedevicetime" method="post">
+
+  <!-- <div class="js-spinner">
+    <input type="txthours" step="1" max="10" min="0" data-stepper-debounce="400" class="js-stepper">
+    <button type="button" spinner-button="up" title="add 1">+</button>
+    <button type="button" spinner-button="down" title="subtract 1">-</button>
+</div>
+<div class="js-spinner">
+  <input type="txtmin" step="1" max="10" min="0" data-stepper-debounce="400" class="js-stepper">
+  <button type="button" spinner-button="up" title="add 1">+</button>
+  <button type="button" spinner-button="down" title="subtract 1">-</button>
+</div>
+
+<div class="js-spinner">
+  <input type="txtfeq" step="1" max="10" min="0" data-stepper-debounce="400" class="js-stepper">
+  <button type="button" spinner-button="up" title="add 1">+</button>
+  <button type="button" spinner-button="down" title="subtract 1">-</button>
+</div>
+<div class="js-spinner">
+  <input type="txtdevice_status" step="1" max="1" min="0" data-stepper-debounce="400" class="js-stepper">
+  <button type="button" spinner-button="up" title="add 1">+</button>
+  <button type="button" spinner-button="down" title="subtract 1">-</button>
+</div> -->
+
+
+   <input type="text" name="txthours" placeholder=" Device hours "><br> 
+
+  <input type="text" name="txtmin" placeholder="Device Min."><br>
+  <input type="text" name="txtfeq" placeholder="Device Running Feq"><br>
+  <input type="text" name="txtdevice_status" placeholder="Device Status"><br>
+
+  <button type="submit">Submit</button>
+  <button type="button" id="resetButton">Reset</button>
+</form>
 
 <main>
-  <div margin-left: auto; margin-right: 0;> <p> Latest Device Status : &nbsp;&nbsp;
-    <% if( LatestDeviceStatus == 0) {%>
-      <img src="reddot.png" width="20px" height="20px" alt="False" style="margin-left: auto; margin-right: 0;" /> 
-      <%
-  }
-    else{%>
-      <img src="green-dot-small.svg.hi.png" alt="true" width="20px" height="20px" style="margin-left: auto; margin-right: 0;" /> 
-    <%} %>
-    </p></div>
+  
   <div class="jumbotron">
     
     <table id="myTable" class="display">
       <thead>
           <tr>
-            <th>device Id </th>
+            <th>Device Name </th>
               <th>Device Status </th>
-              <th>Sreation Date</th>
-              <th>Device Starttime</th>
+              <th>Device start Hour</th>
+              <th>Device Start Min</th>
+              <th>device Running Duration</th>
+              
           </tr>
       </thead>
       <tbody>
         <% data.forEach(function(data) { %>
           <tr>
-              <td><%= data.device_id %></td>
+              <td><%= data.device_name %></td>
               <td><% if( data.device_status ==0) {%>
                 <img src="reddot.png" width="20px" height="20px" alt="False" /> 
                 
@@ -45,8 +82,9 @@
 
               <%} %>
               </td>
-              <td><%= data.creation_date %></td>
-              <td><%= data.device_starttime %></td>
+              <td><%= data.device_star_hour %> hr.</td>
+              <td><%= data.device_star_min %> min</td>
+              <td><%= data.device_running_feq %></td>
           </tr>
           <% }); %>
       </tbody>

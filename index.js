@@ -1,13 +1,13 @@
 // Import the required modules
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
-
+const bodyParser = require('body-parser');
 // Create an Express app
 const app = express();
 app.use(express.static('public'))
 // set the view engine to ejs
 app.set('view engine', 'ejs');
-
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Create a SQLite database object
 const db = new sqlite3.Database('./db/wms-db.db', (err) => {
@@ -49,7 +49,7 @@ app.get('/deviceinfo', (req, res) => {
 
 app.get('/deviceinfo', (req, res) => {
 
-    db.all('select * from deviceinfo where device_status is not null', (err, rows) => {
+    db.all('select device_id, device_name, device_status, device_star_hour, device_running_feq, device_star_min from deviceinfo limit 1', (err, rows) => {
         if (err) {
             // Send an error response if there is any
             console.log(err.message);
@@ -68,17 +68,63 @@ app.get('/updatedeviceinfo/:hr/:min', (req, res) => {
         if (err) {
             // Send an error response if there is any
             console.log(err.message);
-             res.status(500).send(err.message);
+            res.status(500).send(err.message);
         } else {
             // Send the rows as a JSON array if successful
             console.log(rows);
             res.json(rows);
-            
+            // res.render('index');
         }
     });
 
 });
 
+app.post('/updatedevicetime', (req, res) => {
+    console.log(req.body);
+
+    const data = {
+        hours: req.body.txthours,
+        min: req.body.txtmin,
+        feq: req.body.txtfeq,
+        device_status: req.body.txtdevice_status
+       
+    };
+    // Handle the data as needed (e.g., send it to an API or process it)
+
+    // For now, we'll just send the data back as a response
+    //res.send(data);
+    let sSql = `update deviceinfo set device_star_hour=${data.hours},device_star_min =${data.min}, device_running_feq=${data.feq},device_status=${data.device_status}`;
+    console.log(sSql);
+
+    db.all(sSql, (err, rows) => {
+        if (err) {
+            // Send an error response if there is any
+            console.log(err.message);
+            res.status(500).send(err.message);
+        } else {
+            // Send the rows as a JSON array if successful
+            console.log(rows);
+            //res.json(rows);
+            var data = [];
+            db.all('select device_id, device_name, device_status, device_star_hour, device_running_feq, device_star_min from deviceinfo limit 1', (err, rows) => {
+                if (err) {
+                    // Send an error response if there is any
+                    console.log(err.message);
+                } else {
+                    // Send the rows as a JSON array if successful
+                    data = rows;
+                    res.render('pages/index', {
+                        data: data,
+                        LatestDeviceStatus: rows[0].device_status
+                    });
+                }
+
+            });
+
+        }
+
+    });
+});
 app.get('/devicestatus/:device_id', (req, res) => {
 
     let sqlQuery = `select device_status  from deviceinfo where device_id=${req.params.device_id}`;
@@ -105,7 +151,7 @@ app.post('/devicestatus/:device_id/:status', (req, res) => {
         } else {
             insertDevicelog(req.params.device_id, req.params.status)
             // Send the rows as a JSON array if successful
-            res.json({status:true, desc: "Device has been update"});
+            res.json({ status: true, desc: "Device has been update" });
         }
     });
 });
@@ -184,35 +230,35 @@ function insertDevicelog(device_id, device_status) {
 
 // index page
 app.get('/', function (req, res) {
-    
-    // var data=[];
+
+    var data = [];
+    db.all('select device_id, device_name, device_status, device_star_hour, device_running_feq, device_star_min from deviceinfo limit 1', (err, rows) => {
+        if (err) {
+            // Send an error response if there is any
+            console.log(err.message);
+        } else {
+            // Send the rows as a JSON array if successful
+            data = rows;
+            res.render('pages/index', {
+                data: data,
+                LatestDeviceStatus: rows[0].device_status
+            });
+        }
+
+    });
+
+
+    console.log(data);
+
     // db.all('select * from devicelogger order by id desc limit 10', (err, rows) => {
     //     if (err) {
     //         // Send an error response if there is any
-    //         console.log(err.message);
+    //         res.status(500).send(err.message);
     //     } else {
     //         // Send the rows as a JSON array if successful
-    //         data=rows;
-    //         res.render('pages/index', {
-    //             data:  data,
-    //             LatestDeviceStatus:rows[0].device_status
-    //           });
+    //         res.json(rows);
     //     }
-
-    // });
-
-    
-    // console.log(data);
-
-    db.all('select * from devicelogger order by id desc limit 10', (err, rows) => {
-        if (err) {
-            // Send an error response if there is any
-            res.status(500).send(err.message);
-        } else {
-            // Send the rows as a JSON array if successful
-            res.json(rows);
-        }
-    });     
+    // });     
 
 
 });
@@ -228,10 +274,10 @@ app.on('close', () => {
 });
 
 
-const port =process.env.PORT || 80
+const port = process.env.PORT || 80
 
 // Start the app on port 8080
 app.listen(port, () => {
-    console.log('Server is running on port '+port);
+    console.log('Server is running on port ' + port);
 
 });
