@@ -228,9 +228,10 @@ app.on('close', () => {
 });
 
 
+const port =process.env.PORT || 80
 
 // Start the app on port 8080
-app.listen(8080, () => {
-    console.log('Server is running on port 8080.');
+app.listen(port, () => {
+    console.log('Server is running on port '+port);
 
 });
