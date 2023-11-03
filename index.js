@@ -33,27 +33,47 @@ app.get('/users', (req, res) => {
 
 app.get('/deviceinfo', (req, res) => {
 
-    db.all('select * from deviceinfo', (err, rows) => {
+    db.all('select * from deviceinfo where device_status is not null', (err, rows) => {
         if (err) {
             // Send an error response if there is any
+            console.log(err.message);
             res.status(500).send(err.message);
+
         } else {
             // Send the rows as a JSON array if successful
+            console.log(rows);
             res.json(rows);
-
         }
     });
 });
 
-app.get('/devicelog', (req, res) => {
+app.get('/deviceinfo', (req, res) => {
 
-    db.all('select * from devicelogger order by id desc limit 10', (err, rows) => {
+    db.all('select * from deviceinfo where device_status is not null', (err, rows) => {
         if (err) {
             // Send an error response if there is any
+            console.log(err.message);
             res.status(500).send(err.message);
+
         } else {
             // Send the rows as a JSON array if successful
+            console.log(rows);
             res.json(rows);
+        }
+    });
+});
+app.get('/updatedeviceinfo/:hr/:min', (req, res) => {
+
+    db.all(`update deviceinfo set device_star_hour=${req.params.hr},device_star_min =${req.params.min}`, (err, rows) => {
+        if (err) {
+            // Send an error response if there is any
+            console.log(err.message);
+             res.status(500).send(err.message);
+        } else {
+            // Send the rows as a JSON array if successful
+            console.log(rows);
+            res.json(rows);
+            
         }
     });
 
@@ -83,16 +103,12 @@ app.post('/devicestatus/:device_id/:status', (req, res) => {
             // Send an error response if there is any
             res.status(500).send(err.message);
         } else {
-
-
             insertDevicelog(req.params.device_id, req.params.status)
             // Send the rows as a JSON array if successful
-            res.json(rows);
+            res.json({status:true, desc: "Device has been update"});
         }
     });
-
 });
-
 
 /*
     Route path: /users/:userId/books/:bookId
@@ -169,25 +185,37 @@ function insertDevicelog(device_id, device_status) {
 // index page
 app.get('/', function (req, res) {
     
-    var data=[];
+    // var data=[];
+    // db.all('select * from devicelogger order by id desc limit 10', (err, rows) => {
+    //     if (err) {
+    //         // Send an error response if there is any
+    //         console.log(err.message);
+    //     } else {
+    //         // Send the rows as a JSON array if successful
+    //         data=rows;
+    //         res.render('pages/index', {
+    //             data:  data,
+    //             LatestDeviceStatus:rows[0].device_status
+    //           });
+    //     }
+
+    // });
+
+    
+    // console.log(data);
+
     db.all('select * from devicelogger order by id desc limit 10', (err, rows) => {
         if (err) {
             // Send an error response if there is any
-            console.log(err.message);
+            res.status(500).send(err.message);
         } else {
             // Send the rows as a JSON array if successful
-            data=rows;
-            res.render('pages/index', {
-                data:  data,
-                LatestDeviceStatus:rows[0].device_status
-              });
+            res.json(rows);
         }
+    });     
 
-    });
 
-    
-    console.log(data);
-      });
+});
 
 // Close the database connection when the app is terminated
 app.on('close', () => {
