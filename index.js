@@ -57,8 +57,8 @@ app.get('/deviceinfo', (req, res) => {
 
         } else {
             // Send the rows as a JSON array if successful
-            console.log(rows[0]);
-            res.json(rows[0]);
+            console.log(rows);
+            res.json(rows);
         }
     });
 });
@@ -112,7 +112,7 @@ app.post('/updatedevicetime', (req, res) => {
                     console.log(err.message);
                 } else {
                     // Send the rows as a JSON array if successful
-                    data = rows[0];
+                    data = rows;
                     res.render('pages/index', {
                         data: data,
                         LatestDeviceStatus: rows[0].device_status
