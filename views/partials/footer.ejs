@@ -1,8 +1,31 @@
 <p class="text-center text-muted">&copy; Copyright 2023 Avinash Joshi</p>
 <script type="text/javascript" class="init">
 		
-    new DataTable('#myTable');
-    new DataTable('#deviceloggerTable');
+
+
+
+
+$('#myTable').DataTable({
+    autoWidth: false,
+    columnDefs: [
+        {
+            targets: ['_all'],
+            className: 'mdc-data-table__cell',
+        },
+    ],
+});
+
+$('#deviceloggerTable').DataTable({
+    autoWidth: false,
+    columnDefs: [
+        {
+            targets: ['_all'],
+            className: 'mdc-data-table__cell',
+        },
+    ],
+});
+
+
 </script>
 
 <script>
