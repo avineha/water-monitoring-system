@@ -90,6 +90,52 @@
       </tbody>
   </table>
   </div>
+
+  <p>Device Log</p>
+
+  <div class="jumbotron">
+    
+    <table id="deviceloggerTable" class="display">
+      <thead>
+          <tr>
+            <th>Id </th>
+              <th>Device Status </th>
+              <th>creation date</th>
+              <th>device start time</th>
+              <th>device stop time</th>
+              
+          </tr>
+      </thead>
+      <tbody>
+        <% DeviceLogData.forEach(function(data) { %>
+          <tr>
+              <td><%= data.id %></td>
+              <td><% if( data.device_status ==0) {%>
+                <img src="reddot.png" width="20px" height="20px" alt="False" /> 
+                
+              <%
+            }
+              else{%>
+                <img src="green-dot-small.svg.hi.png" alt="true" width="20px" height="20px" /> 
+                
+
+              <%} %>
+              </td>
+              <td><%= data.creation_date %> hr.</td>
+              <td><%= data.device_starttime %> min</td>
+              <td><%= data.device_stoptime %></td>
+          </tr>
+          <% }); %>
+      </tbody>
+  </table>
+  </div>
+
+  
+  
+
+
+
+
 </main>
 <footer>
   <%- include('../partials/footer'); %>

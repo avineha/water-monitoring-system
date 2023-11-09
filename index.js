@@ -4,7 +4,7 @@ const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 // Create an Express app
 const app = express();
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public/'));
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -47,21 +47,26 @@ app.get('/deviceinfo', (req, res) => {
     });
 });
 
-app.get('/deviceinfo', (req, res) => {
+function getDeviceLogger(device_id) {
 
-    db.all('select device_id, device_name, device_status, device_star_hour, device_running_feq, device_star_min from deviceinfo limit 1', (err, rows) => {
+const dataarray=[];
+
+    db.all('SELECT * from devicelogger order by id DESC', (err, rows) => {
         if (err) {
             // Send an error response if there is any
             console.log(err.message);
-            res.status(500).send(err.message);
+            return err.message;
 
         } else {
             // Send the rows as a JSON array if successful
             console.log(rows);
-            res.json(rows);
+            dataarray.push(...rows);
+
+            //return rows;
         }
     });
-});
+    return dataarray;
+}
 app.get('/updatedeviceinfo/:hr/:min', (req, res) => {
 
     db.all(`update deviceinfo set device_star_hour=${req.params.hr},device_star_min =${req.params.min}`, (err, rows) => {
@@ -87,12 +92,18 @@ app.post('/updatedevicetime', (req, res) => {
         min: req.body.txtmin,
         feq: req.body.txtfeq,
         device_status: req.body.txtdevice_status
-       
+
     };
     // Handle the data as needed (e.g., send it to an API or process it)
 
     // For now, we'll just send the data back as a response
     //res.send(data);
+
+    let devicelog = getDeviceLogger(1);
+    console.log(devicelog);
+
+
+
     let sSql = `update deviceinfo set device_star_hour=${data.hours},device_star_min =${data.min}, device_running_feq=${data.feq},device_status=${data.device_status}`;
     console.log(sSql);
 
@@ -115,7 +126,8 @@ app.post('/updatedevicetime', (req, res) => {
                     data = rows;
                     res.render('pages/index', {
                         data: data,
-                        LatestDeviceStatus: rows[0].device_status
+                        LatestDeviceStatus: rows[0].device_status,
+                        DeviceLogData: devicelog
                     });
                 }
 
@@ -231,6 +243,9 @@ function insertDevicelog(device_id, device_status) {
 // index page
 app.get('/', function (req, res) {
 
+    let devicelog = getDeviceLogger(1);
+    console.log(devicelog);
+
     var data = [];
     db.all('select device_id, device_name, device_status, device_star_hour, device_running_feq, device_star_min from deviceinfo limit 1', (err, rows) => {
         if (err) {
@@ -239,9 +254,11 @@ app.get('/', function (req, res) {
         } else {
             // Send the rows as a JSON array if successful
             data = rows;
+
             res.render('pages/index', {
                 data: data,
-                LatestDeviceStatus: rows[0].device_status
+                LatestDeviceStatus: rows[0].device_status,
+                DeviceLogData: devicelog
             });
         }
 
