@@ -291,7 +291,7 @@ app.on('close', () => {
 });
 
 
-const port = process.env.PORT || 80
+const port = process.env.PORT 
 
 // Start the app on port 8080
 app.listen(port, () => {
